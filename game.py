@@ -6,7 +6,7 @@ import itertools
 import pygame as pg
 
 CAPTION = "YSU Hackron Project"
-SCREEN_SIZE = (500, 500)
+SCREEN_SIZE = (750, 750)
 BACKGROUND_COLOR = (118, 118, 118)
 COLOR_KEY = (pg.Color("magenta"))
 
@@ -149,7 +149,7 @@ class Control(object):
         self.screen = pg.display.get_surface()
         self.screen_rect = self.screen.get_rect()
         self.clock = pg.time.Clock()
-        self.fps = 60.0
+        self.fps = 60
         self.done = False
         self.keys = pg.key.get_pressed()
         self.player = Player(self.screen_rect.center, 3)
@@ -163,11 +163,11 @@ class Control(object):
         blocks = pg.sprite.Group()
         for pos in [(400, 400), (300, 270), (150, 170)]:
             Block(pos, blocks)
-        for i in range(9):
-            Block((i * 50, 0), blocks)
-            Block((450, 50 * i), blocks)
-            Block((50 + i * 50, 450), blocks)
-            Block((0, 50 + 50 * i), blocks)
+        for i in range(int(SCREEN_SIZE[0] / 50)):
+            Block((i * 50, 0), blocks) # Top
+            Block((SCREEN_SIZE[0] - 50, 50 * i), blocks) # Right
+            Block((50 + i * 50, SCREEN_SIZE[1] - 50), blocks) # Bottom
+            Block((0, 50 + 50 * i), blocks) # Left
         return blocks
 
     def event_loop(self):
