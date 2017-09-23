@@ -3,7 +3,7 @@ import sys
 import pygame as pg
 
 CAPTION = "YSU Hackron Project"
-SCREEN_SIZE = (1400, 1050)
+SCREEN_SIZE = (750, 750)
 BACKGROUND_COLOR = (118, 118, 118)
 TRANSPARENT = (0, 0, 0, 0)
 COLOR_KEY = (255, 0, 255)
@@ -13,6 +13,8 @@ class Control(object):
     def __init__(self):
         """Initialize standard attributes standardly"""
         self.screen = pg.display.get_surface()
+        self.clock = pg.time.Clock()
+        self.fps = 60.0
         self.done = False
         self.keys = pg.key.get_pressed()
 
@@ -26,11 +28,18 @@ class Control(object):
         """Draw all elements to display"""
         self.screen.fill(BACKGROUND_COLOR)
 
+    def display_fps(self):
+        caption = "{} - FPS: {:.2f}".format(CAPTION, self.clock.get_fps())
+        pg.display.set_caption(caption)
+
     def main_loop(self):
+        delta = self.clock.tick(self.fps)/1000.0
         while not self.done:
             self.event_loop()
             self.draw()
             pg.display.update()
+            delta = self.clock.tick(self.fps)/1000.0
+            self.display_fps()
 
 
 def main():
