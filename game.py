@@ -19,7 +19,7 @@ DIRECT_DICT = {pg.K_LEFT: (-1, 0),
 class Player(pg.sprite.Sprite):
     SIZE = (50, 50)
 
-    def __init__(self, pos, speed, facing=pg.K_DOWN, *groups):
+    def __init__(self, pos, speed, facing=pg.K_DOWN, *groups, battleCounter = 0):
         super(Player, self).__init__(*groups)
         self.speed = speed
         self.direction = facing
@@ -33,6 +33,7 @@ class Player(pg.sprite.Sprite):
         self.walkframe_dict = self.make_frame_dict()
         self.adjust_images()
         self.rect = self.image.get_rect(center=pos)
+        self.battleCounter = battleCounter
 
     def make_frame_dict(self):
         frames = split_sheet(PLAYER_IMAGE, Player.SIZE, 4, 1)[0]
@@ -106,6 +107,31 @@ class Player(pg.sprite.Sprite):
         while collision:
             self.adjust_on_collision(collision, i)
             collision = pg.sprite.spritecollideany(self, obstacles)
+        self.battleCounter += 1
+        if self.battleCounter == 100:
+            result = random.randint(0, 100)
+            if result >= 90:
+                print("Trigger battle")
+                self.battleCounter = 0
+        elif self.battleCounter == 200:
+            result = random.randint(0, 100)
+            if result >= 80:
+                self.battleCounter = 0
+        elif self.battleCounter == 300:
+            result = random.randint(0, 100)
+            if result >= 70:
+                print("Trigger battle.")
+                self.battleCounter = 0
+        elif self.battleCounter == 400:
+            result = random.randint(0, 100)
+            if result >= 50:
+                print("Trigger battle.")
+                self.battleCounter = 0
+        elif self.battleCounter == 500:
+            result = random.randint(0, 100)
+            if result >= 0:
+                print("Trigger battle.")
+                self.battleCounter = 0
 
     def adjust_on_collision(self, collide, i):
         """
