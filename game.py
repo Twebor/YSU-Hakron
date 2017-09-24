@@ -35,11 +35,8 @@ class Player(pg.sprite.Sprite):
         self.walkframe_dict = self.make_frame_dict()
         self.adjust_images()
         self.rect = self.image.get_rect(center=pos)
-<<<<<<< HEAD
         self.steps = 0.0
-=======
         self.battleCounter = battleCounter
->>>>>>> 4368be6e7094942c805f9dc0e6c88985d2e526ba
 
     def make_frame_dict(self):
         frames = split_sheet(PLAYER_IMAGE, Player.SIZE, 4, 1)[0]
