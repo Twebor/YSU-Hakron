@@ -2,7 +2,9 @@ import os
 import sys
 import random
 import itertools
-
+# look into subprocess for opening new window and pipe output.  Look into eztext perhaps for some text input.
+# import subprocess
+# import eztext
 import pygame as pg
 
 CAPTION = "YSU Hackron Project"
@@ -33,6 +35,7 @@ class Player(pg.sprite.Sprite):
         self.walkframe_dict = self.make_frame_dict()
         self.adjust_images()
         self.rect = self.image.get_rect(center=pos)
+        self.steps = 0.0
 
     def make_frame_dict(self):
         frames = split_sheet(PLAYER_IMAGE, Player.SIZE, 4, 1)[0]
@@ -103,6 +106,10 @@ class Player(pg.sprite.Sprite):
         direction_vector = DIRECT_DICT[self.direction]
         self.rect[i] += self.speed * direction_vector[i]
         collision = pg.sprite.spritecollideany(self, obstacles)
+        self.steps += 1 # each step increments very quickly
+        if self.steps > 1 and self.steps % 300 == 0:
+            print(self.steps)
+            # os.system("xterm -e 'python test.py'") # works to open completely separate terminal on linux
         while collision:
             self.adjust_on_collision(collision, i)
             collision = pg.sprite.spritecollideany(self, obstacles)
@@ -126,10 +133,11 @@ class Block(pg.sprite.Sprite):
     Obstacles for player to collide with
     """
 
-    def __init__(self, pos, *groups):
+    def __init__(self, pos, *groups, collidable=True):
         super(Block, self).__init__(*groups)
         self.image = self.make_image()
         self.rect = self.image.get_rect(topleft=pos)
+        self.collidable = collidable
 
     def make_image(self):
         fill_color = [random.randint(0, 255) for _ in range(3)]
@@ -166,7 +174,8 @@ class Control(object):
         for i in range(int(SCREEN_SIZE[0] / 50)):
             Block((i * 50, 0), blocks) # Top
             Block((SCREEN_SIZE[0] - 50, 50 * i), blocks) # Right
-            Block((50 + i * 50, SCREEN_SIZE[1] - 50), blocks) # Bottom
+            if not i == int(SCREEN_SIZE[0] / 50) - 1:
+                Block((50 + i * 50, SCREEN_SIZE[1] - 50), blocks) # Bottom
             Block((0, 50 + 50 * i), blocks) # Left
         return blocks
 
@@ -195,8 +204,13 @@ class Control(object):
         Perform all necessary updating and drawing to the screen
         """
         self.screen.fill(BACKGROUND_COLOR)
+        # largeText = pg.font.Font('freesansbold.ttf', 115)
+        # TextSurf, TextRect = text_objects("MESSAGE TO DISPLAY", largeText)
+        # TextRect.center = ((SCREEN_SIZE[0] / 2), (SCREEN_SIZE[1] / 2))
+        # self.screen.blit(TextSurf, TextRect)
         self.all_sprites.draw(self.screen)
         pg.display.update()
+        pg.display.flip()
 
     def main_loop(self):
         delta = self.clock.tick(self.fps) / 1000.0
@@ -206,6 +220,10 @@ class Control(object):
             self.update()
             delta = self.clock.tick(self.fps) / 1000.0
             self.display_fps()
+
+def text_objects(text, font):
+    textSurface = font.render(text, True, (255, 255, 255))
+    return textSurface, textSurface.get_rect()
 
 
 def split_sheet(sheet, size, columns, rows):
@@ -227,10 +245,11 @@ def split_sheet(sheet, size, columns, rows):
 
 def main():
     global PLAYER_IMAGE, SHADE_MASK
+    extra_screen = 50 * 8
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pg.init()
     pg.display.set_caption(CAPTION)
-    pg.display.set_mode(SCREEN_SIZE)
+    pg.display.set_mode((SCREEN_SIZE[0] + extra_screen, SCREEN_SIZE[1]))
     PLAYER_IMAGE = pg.image.load("./assets/png/player.png").convert()
     PLAYER_IMAGE.set_colorkey(COLOR_KEY)
     SHADE_MASK = pg.image.load("./assets/png/shader.png")
