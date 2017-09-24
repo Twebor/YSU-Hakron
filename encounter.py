@@ -105,12 +105,3 @@ while monsterDead == False and playerDead == False:
 		playerDead=True
 	else:
 		playerDead=False
-
-
-
-
-		
-
-
-	#figure out what badguy
-
