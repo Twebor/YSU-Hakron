@@ -8,7 +8,7 @@ import pygame as pg
 CAPTION = "YSU Hackron Project"
 SCREEN_SIZE = (750, 750)
 BACKGROUND_COLOR = (118, 118, 118)
-COLOR_KEY = (pg.Color("magenta"))
+COLOR_KEY = (25, 25,25)
 
 DIRECT_DICT = {pg.K_LEFT: (-1, 0),
                pg.K_RIGHT: (1, 0),
